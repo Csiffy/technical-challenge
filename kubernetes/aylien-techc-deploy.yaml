@@ -1,0 +1,23 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: tech-challenge-deploy
+  namespace: aylien
+spec:
+  replicas: 2
+  template:
+    metadata:
+      labels:
+        app: tech-challenge
+    spec:
+      containers:
+        - name: techtest-py
+          image: localhost:5000/aylien/techtest-py:latest
+          ports:
+            - containerPort: 8080
+              name: app
+              protocol: TCP
+            - containerPort: 8081
+              name: prom
+              protocol: TCP
+

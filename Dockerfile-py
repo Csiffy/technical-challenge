@@ -1,0 +1,29 @@
+FROM python:3.6-alpine
+
+LABEL appname="aylien-techtest-py"
+LABEL maintainer="Zoltan Csiffary (zoltan.csiffary@gmail.com)"
+LABEL version="0.0.1"
+LABEL description="Aylien technical challenge"
+
+COPY app /app
+WORKDIR /app
+
+RUN set -eux; \
+	apk add --no-cache \
+		ca-certificates \
+	&& \
+        apk add --no-cache --virtual .build-deps \
+                make \
+	&& \
+	make build \
+	&& \
+	apk del .build-deps \
+	&& \
+	rm -rf /var/cache/apk/*
+
+# or RUN pip install -r requirements.txt
+
+EXPOSE 8080 8081
+
+CMD ["python", "app.py", "--port", "8080", "--monitor", "8081"]
+
