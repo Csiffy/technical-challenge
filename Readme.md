@@ -75,10 +75,59 @@ kubectl scale --replicas=1 deployment/tech-challenge-deploy
 
 This was the easiest and simple way to deploy the application, but instead it you should deploy the application with a configuration manager, like ansible or you can use terraform or any CI/CD tools, like Gitlab-CI, Jenkins, etc. Maybe the best way if you create the resources with terraform and controlling it with a CI tool.
 
+Monitoring with Prometheus
+
+If you have already installed Prometheus, then a simple configuration is enough
+
+Extend the prometheus.conf with a new block below of the "scrape_configs" block
+
+```
+- job_name: 'aylien-techtest'
+  metrics_path: /
+
+  # metrics_path defaults to '/metrics'
+  # scheme defaults to 'http'.
+  static_configs:
+    - targets: ['{domain or ip address of the application container}:8081']
+```
+
+Other case, here is a simple Prometheus server install steps with Grafana and AlertManager
+
+Create the monitoring namespace
+
+```bash
+kubectl create namespace monitoring
+```
+
+We need to create some resources for Prometheus
+
+```bash
+kubectl apply -f prometheus-clusterRole.yaml
+kubectl apply -f prometheus-config-map.yaml
+kubectl apply -f prometheus-deployment.yaml
+kubectl apply -f prometheus-service.yaml
+```
+
+Grafana deploy to better visualise the collected metrics
+
+```bash
+kubectl apply -f grafana-secret.yaml
+kubectl apply -f grafana-deploy.yaml
+kubectl apply -f grafana-service.yaml
+```
+
+AlertManager deployment files and install commands
+
+```bash
+kubectl apply -f alertmanager-configmap.yaml
+kubectl apply -f alertmanager-deploy.yaml
+kubectl apply -f alertmanager-service.yaml
+```
+
+If you use multi site Kubernetes cluster configuration, you should create LoadBalancer to route the traffic to the application
+
 
 ## Usage
-
-In the `app` directory you will see a small Python web service (`app.py`), a dependency list (`requirements.txt`) and a `Makefile`. The `Makefile` contains 2 targets: `build` that just installs the requirements into the current Python environment, and `run` which runs an example instance of the application.
 
 The application has a primary endpoint at `/v1/`. When you make calls to this endpoint, you can send a JSON string as the argument "input". The JSON string contains three keys: colors, costumers and demands.
 
