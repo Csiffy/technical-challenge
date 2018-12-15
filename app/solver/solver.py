@@ -54,6 +54,7 @@ def start(colors, customers, mattes, glossy):
                     result = result_i
     return solved, result
 
+
 def reduce(solution_on_stack, change, customers, mattes, glossy):
     solution = list(solution_on_stack)
     solution[change] = 1

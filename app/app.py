@@ -5,13 +5,11 @@ from __future__ import unicode_literals
 
 import sys
 import argparse
-import random
 
 from solver.solver import solver
 from flask import Flask, request
 import json
 from prometheus_client import Counter, start_wsgi_server as prometheus_server
-
 
 
 MAX_VALUE = 1000
